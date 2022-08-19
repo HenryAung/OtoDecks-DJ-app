@@ -13,7 +13,7 @@ MainComponent::MainComponent()
 {
     // Make sure you set the size of the component after
     // you add any child components.
-    setSize (1200, 600);
+    setSize (1200, 800);
 
     // Some platforms require permissions to open input channels so request that here
     if (RuntimePermissions::isRequired (RuntimePermissions::recordAudio)
@@ -81,9 +81,11 @@ void MainComponent::paint (Graphics& g)
 
 void MainComponent::resized()
 {
-    deckGUI1.setBounds(0, 0, getWidth()/2, getHeight()/ 2 );
-    deckGUI2.setBounds(getWidth()/2, 0, getWidth()/2, getHeight() / 2);
+    double height = getHeight() / 12; 
+    double width = getWidth() / 12; 
+    deckGUI1.setBounds(0, 0, getWidth()/2, height * 8 );
+    deckGUI2.setBounds(getWidth()/2, 0, getWidth()/2, height * 8);
 
-    playlistComponent.setBounds(0, getHeight() / 2, getWidth(), getHeight() / 2);
+    playlistComponent.setBounds(0, height * 8, getWidth(), getHeight() * 4);
 }
 

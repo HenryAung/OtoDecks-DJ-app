@@ -39,9 +39,18 @@ DeckGUI::DeckGUI(DJAudioPlayer* _player,
     posSlider.addListener(this);
 
 
-    volSlider.setRange(0.0, 1.0);
-    speedSlider.setRange(0.0, 100.0);
+    volSlider.setRange(0.0f, 2.0f, 0.01f);
+    volSlider.setSliderStyle(Slider::SliderStyle::Rotary);
+    volSlider.setTextBoxStyle(Slider::TextBoxBelow, false, 50, 20); 
+    volSlider.setValue(1.0f); 
+
+    speedSlider.setRange(0.1f, 10.0f, 0.01f);
+    speedSlider.setSliderStyle(Slider::SliderStyle::Rotary);
+    speedSlider.setTextBoxStyle(Slider::TextBoxBelow, false, 50, 25); 
+
+
     posSlider.setRange(0.0, 1.0);
+    posSlider.setTextBoxStyle(Slider::NoTextBox, true, 0, 0); 
 
     startTimer(500);
 
@@ -76,13 +85,18 @@ void DeckGUI::paint (Graphics& g)
 void DeckGUI::resized()
 {
     double rowH = getHeight() / 8; 
-    playButton.setBounds(0, 0, getWidth(), rowH);
-    stopButton.setBounds(0, rowH, getWidth(), rowH);  
-    volSlider.setBounds(0, rowH * 2, getWidth(), rowH);
-    speedSlider.setBounds(0, rowH * 3, getWidth(), rowH);
-    posSlider.setBounds(0, rowH * 4, getWidth(), rowH);
-    waveformDisplay.setBounds(0, rowH * 5, getWidth(), rowH * 2);
-    loadButton.setBounds(0, rowH * 7, getWidth(), rowH);
+    double columnW = getWidth() / 8; 
+
+    waveformDisplay.setBounds(0, 0, getWidth(), rowH* 1.5);
+    posSlider.setBounds(0, rowH * 1.5, getWidth(), rowH * 0.5);
+ 
+    volSlider.setBounds(0, rowH * 2 ,columnW * 4 , rowH * 2.5);
+    speedSlider.setBounds(columnW * 4, rowH * 2, columnW * 4, rowH * 2.5);
+    
+
+    playButton.setBounds(columnW, rowH * 5, columnW, rowH);
+    stopButton.setBounds(columnW * 4, rowH * 5, columnW, rowH);
+    loadButton.setBounds(columnW * 2.5, rowH * 6, columnW, rowH);
 
 }
 
@@ -101,7 +115,7 @@ void DeckGUI::buttonClicked(Button* button)
     }
        if (button == &loadButton)
     {
-        auto fileChooserFlags = 
+       auto fileChooserFlags =  
         FileBrowserComponent::canSelectFiles;
         fChooser.launchAsync(fileChooserFlags, [this](const FileChooser& chooser)
         {
