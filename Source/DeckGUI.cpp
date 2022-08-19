@@ -18,39 +18,58 @@ DeckGUI::DeckGUI(DJAudioPlayer* _player,
            ) : player(_player), 
                waveformDisplay(formatManagerToUse, cacheToUse)
 {
-
-    addAndMakeVisible(playButton);
-    addAndMakeVisible(stopButton);
-    addAndMakeVisible(loadButton);
-       
-    addAndMakeVisible(volSlider);
-    addAndMakeVisible(speedSlider);
-    addAndMakeVisible(posSlider);
-
     addAndMakeVisible(waveformDisplay);
 
-
-    playButton.addListener(this);
-    stopButton.addListener(this);
-    loadButton.addListener(this);
-
-    volSlider.addListener(this);
-    speedSlider.addListener(this);
+    addAndMakeVisible(posSlider);
     posSlider.addListener(this);
+    posSlider.setRange(0.0, 1.0);
+    posSlider.setTextBoxStyle(Slider::NoTextBox, true, 0, 0);
+    posLabel.setText("position", dontSendNotification); 
+    posLabel.attachToComponent(&posSlider, true); 
 
-
+    addAndMakeVisible(volSlider);
+    volSlider.addListener(this);
     volSlider.setRange(0.0f, 2.0f, 0.01f);
     volSlider.setSliderStyle(Slider::SliderStyle::Rotary);
-    volSlider.setTextBoxStyle(Slider::TextBoxBelow, false, 50, 20); 
-    volSlider.setValue(1.0f); 
+    volSlider.setTextBoxStyle(Slider::TextBoxBelow, false, 50, 20);
+    volSlider.setValue(1.0f);
+    volLabel.setText("Volume" , dontSendNotification); 
+    volLabel.attachToComponent(&volSlider, false); 
 
+    addAndMakeVisible(speedSlider);
+    speedSlider.addListener(this);
     speedSlider.setRange(0.1f, 10.0f, 0.01f);
     speedSlider.setSliderStyle(Slider::SliderStyle::Rotary);
-    speedSlider.setTextBoxStyle(Slider::TextBoxBelow, false, 50, 25); 
+    speedSlider.setTextBoxStyle(Slider::TextBoxBelow, false, 50, 25);
+    speedSlider.setTextValueSuffix(" x"); 
+    speedLabel.setText("Speed", dontSendNotification); 
+    speedLabel.attachToComponent(&speedSlider, false); 
 
 
-    posSlider.setRange(0.0, 1.0);
-    posSlider.setTextBoxStyle(Slider::NoTextBox, true, 0, 0); 
+    addAndMakeVisible(playButton);
+    playButton.addListener(this);
+
+    addAndMakeVisible(stopButton);
+    stopButton.addListener(this);
+
+    addAndMakeVisible(loadButton); 
+    loadButton.addListener(this);
+   
+   
+    
+
+    
+
+
+    
+  
+
+    
+    
+    
+
+
+
 
     startTimer(500);
 
@@ -78,7 +97,7 @@ void DeckGUI::paint (Graphics& g)
 
     g.setColour (Colours::white);
     g.setFont (14.0f);
-    g.drawText ("DeckGUI", getLocalBounds(),
+    g.drawText ("", getLocalBounds(),
                 Justification::centred, true);   // draw some placeholder text
 }
 
@@ -87,11 +106,11 @@ void DeckGUI::resized()
     double rowH = getHeight() / 8; 
     double columnW = getWidth() / 8; 
 
-    waveformDisplay.setBounds(0, 0, getWidth(), rowH* 1.5);
-    posSlider.setBounds(0, rowH * 1.5, getWidth(), rowH * 0.5);
+    waveformDisplay.setBounds(0, 0, getWidth(), rowH* 1.3);
+    posSlider.setBounds(80, rowH * 1.3, getWidth()- 80, rowH * 0.5);
  
-    volSlider.setBounds(0, rowH * 2 ,columnW * 4 , rowH * 2.5);
-    speedSlider.setBounds(columnW * 4, rowH * 2, columnW * 4, rowH * 2.5);
+    volSlider.setBounds(0, rowH * 2.8 ,columnW * 4 , rowH * 2.3);
+    speedSlider.setBounds(columnW * 4, rowH * 2.8, columnW * 4, rowH * 2.3);
     
 
     playButton.setBounds(columnW, rowH * 5, columnW, rowH);

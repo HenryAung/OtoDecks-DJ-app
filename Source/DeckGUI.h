@@ -49,9 +49,8 @@ private:
     TextButton stopButton{"STOP"};
     TextButton loadButton{"LOAD"};
   
-    Slider volSlider; 
-    Slider speedSlider;
-    Slider posSlider;
+    Slider volSlider, speedSlider, posSlider; 
+    Label volLabel, speedLabel, posLabel; 
 
     FileChooser fChooser{"Select a file..."};
 
