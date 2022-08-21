@@ -37,6 +37,8 @@ PlayListComponent::PlayListComponent()
     tableComponent.setModel(this);
 
     addAndMakeVisible(tableComponent);
+    addAndMakeVisible(searchBar);
+    addAndMakeVisible(AddSongsToLibaray);
 }
 
 PlayListComponent::~PlayListComponent()
@@ -65,9 +67,10 @@ void PlayListComponent::paint (juce::Graphics& g)
 
 void PlayListComponent::resized()
 {
-    // This method is where you should set the bounds of any child
-    // components that your component contains..
-    tableComponent.setBounds(0, 0, getWidth(), getHeight());
+    searchBar.setBounds(10, 10, 200, 25);
+    searchBar.setText("Search Songs");
+    AddSongsToLibaray.setBounds(getWidth() - 150, 10, 130, 25);
+    tableComponent.setBounds(0, 50, getWidth(), getHeight() - 60);
 }
 
 int PlayListComponent::getNumRows()
@@ -97,11 +100,13 @@ void PlayListComponent::paintCell(Graphics& g,
     int height,
     bool rowIsSelected)
 {
-    g.drawText(trackTitles[rowNumber],
-        2, 0,
-        width - 4, height,
-        Justification::centredLeft,
-        true);
+    if (rowNumber < getNumRows()) {
+        g.drawText(trackTitles[rowNumber],
+            2, 0,
+            width - 4, height,
+            Justification::centredLeft,
+            true);
+    }; 
 }
 
 Component* PlayListComponent::refreshComponentForCell(int rowNumber,

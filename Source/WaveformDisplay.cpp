@@ -31,19 +31,12 @@ WaveformDisplay::~WaveformDisplay()
 
 void WaveformDisplay::paint (Graphics& g)
 {
-    /* This demo code just fills the component's background and
-       draws some placeholder text to get you started.
+    g.fillAll (Colours::darkslategrey);   // clear the background
 
-       You should replace everything in this method with your own
-       drawing code..
-    */
-
-    g.fillAll (getLookAndFeel().findColour (ResizableWindow::backgroundColourId));   // clear the background
-
-    g.setColour (Colours::grey);
+    g.setColour (Colours::black);
     g.drawRect (getLocalBounds(), 1);   // draw an outline around the component
 
-    g.setColour (Colours::orange);
+    g.setColour (Colours::azure);
     if(fileLoaded)
     {
       audioThumb.drawChannel(g, 
@@ -53,7 +46,7 @@ void WaveformDisplay::paint (Graphics& g)
         0, 
         1.0f
       );
-      g.setColour(Colours::lightgreen);
+      g.setColour(Colours::black);
       g.drawRect(position * getWidth(), 0, getWidth() / 20, getHeight());
     }
     else 
@@ -78,7 +71,7 @@ void WaveformDisplay::loadURL(URL audioURL)
   fileLoaded  = audioThumb.setSource(new URLInputSource(audioURL));
   if (fileLoaded)
   {
-    std::cout << "wfd: loaded! " << std::endl;
+      DBG("wfd: loaded! "); 
     repaint();
   }
   else {
@@ -89,10 +82,8 @@ void WaveformDisplay::loadURL(URL audioURL)
 
 void WaveformDisplay::changeListenerCallback (ChangeBroadcaster *source)
 {
-    std::cout << "wfd: change received! " << std::endl;
-
+    DBG("wfd: change received! "); 
     repaint();
-
 }
 
 void WaveformDisplay::setPositionRelative(double pos)
@@ -102,8 +93,6 @@ void WaveformDisplay::setPositionRelative(double pos)
     position = pos;
     repaint();
   }
-
-  
 }
 
 

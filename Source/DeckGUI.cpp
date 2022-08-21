@@ -20,6 +20,10 @@ DeckGUI::DeckGUI(DJAudioPlayer* _player,
 {
     addAndMakeVisible(waveformDisplay);
 
+    getLookAndFeel().setColour(Slider::thumbColourId, Colours::azure); 
+    getLookAndFeel().setColour(Slider::rotarySliderFillColourId, Colours::aliceblue); 
+    getLookAndFeel().setColour(Slider::rotarySliderOutlineColourId, Colours::black); 
+
     addAndMakeVisible(posSlider);
     posSlider.addListener(this);
     posSlider.setRange(0.0, 1.0);
@@ -54,22 +58,6 @@ DeckGUI::DeckGUI(DJAudioPlayer* _player,
 
     addAndMakeVisible(loadButton); 
     loadButton.addListener(this);
-   
-   
-    
-
-    
-
-
-    
-  
-
-    
-    
-    
-
-
-
 
     startTimer(500);
 
@@ -83,34 +71,23 @@ DeckGUI::~DeckGUI()
 
 void DeckGUI::paint (Graphics& g)
 {
-    /* This demo code just fills the component's background and
-       draws some placeholder text to get you started.
+    g.fillAll (Colours::dimgrey);   // clear the background
 
-       You should replace everything in this method with your own
-       drawing code..
-    */
-
-    g.fillAll (getLookAndFeel().findColour (ResizableWindow::backgroundColourId));   // clear the background
-
-    g.setColour (Colours::grey);
+    g.setColour (Colours::black);
     g.drawRect (getLocalBounds(), 1);   // draw an outline around the component
 
-    g.setColour (Colours::white);
-    g.setFont (14.0f);
-    g.drawText ("", getLocalBounds(),
-                Justification::centred, true);   // draw some placeholder text
-}
+} 
 
 void DeckGUI::resized()
 {
     double rowH = getHeight() / 8; 
     double columnW = getWidth() / 8; 
 
-    waveformDisplay.setBounds(0, 0, getWidth(), rowH* 1.3);
-    posSlider.setBounds(80, rowH * 1.3, getWidth()- 80, rowH * 0.5);
+    waveformDisplay.setBounds(0, 0, getWidth(), rowH* 1.3); 
+    posSlider.setBounds(80, rowH * 1.3, getWidth()- 80, rowH * 0.4);
  
-    volSlider.setBounds(0, rowH * 2.8 ,columnW * 4 , rowH * 2.3);
-    speedSlider.setBounds(columnW * 4, rowH * 2.8, columnW * 4, rowH * 2.3);
+    volSlider.setBounds(0, rowH * 2.0,columnW * 4 , rowH * 2.3);
+    speedSlider.setBounds(columnW * 4, rowH * 2.0, columnW * 4, rowH * 2.3);
     
 
     playButton.setBounds(columnW, rowH * 5, columnW, rowH);
@@ -123,12 +100,12 @@ void DeckGUI::buttonClicked(Button* button)
 {
     if (button == &playButton)
     {
-        std::cout << "Play button was clicked " << std::endl;
+        DBG("Play button was clicked "); 
         player->start();
     }
      if (button == &stopButton)
     {
-        std::cout << "Stop button was clicked " << std::endl;
+         DBG("Stop button was clicked "); 
         player->stop();
 
     }
@@ -143,18 +120,6 @@ void DeckGUI::buttonClicked(Button* button)
             waveformDisplay.loadURL(URL{chooser.getResult()}); 
         });
     }
-    // if (button == &loadButton)
-    // {
-    //     FileChooser chooser{"Select a file..."};
-    //     if (chooser.browseForFileToOpen())
-    //     {
-    //         player->loadURL(URL{chooser.getResult()});
-    //         waveformDisplay.loadURL(URL{chooser.getResult()});
-            
-    //     }
-
-
-    // }
 }
 
 void DeckGUI::sliderValueChanged (Slider *slider)
@@ -178,13 +143,13 @@ void DeckGUI::sliderValueChanged (Slider *slider)
 
 bool DeckGUI::isInterestedInFileDrag (const StringArray &files)
 {
-  std::cout << "DeckGUI::isInterestedInFileDrag" << std::endl;
+    DBG("DeckGUI::isInterestedInFileDrag"); 
   return true; 
 }
 
 void DeckGUI::filesDropped (const StringArray &files, int x, int y)
 {
-  std::cout << "DeckGUI::filesDropped" << std::endl;
+    DBG("DeckGUI::filesDropped"); 
   if (files.size() == 1)
   {
     player->loadURL(URL{File{files[0]}});
@@ -193,7 +158,6 @@ void DeckGUI::filesDropped (const StringArray &files, int x, int y)
 
 void DeckGUI::timerCallback()
 {
-    //std::cout << "DeckGUI::timerCallback" << std::endl;
     waveformDisplay.setPositionRelative(
             player->getPositionRelative());
 }

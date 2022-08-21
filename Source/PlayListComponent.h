@@ -51,7 +51,8 @@ public:
         void buttonClicked(Button* button) override;
 
 private:
-
+    TextButton AddSongsToLibaray{ "Add Songs" };
+    TextEditor searchBar;
 
     TableListBox tableComponent; 
     std::vector<std::string> trackTitles; 

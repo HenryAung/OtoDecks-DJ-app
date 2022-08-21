@@ -44,19 +44,17 @@ public:
     void timerCallback() override; 
 
 private:
+    WaveformDisplay waveformDisplay;
+    Slider volSlider, speedSlider, posSlider;
+    Label volLabel, speedLabel, posLabel;
 
     TextButton playButton{"PLAY"};
     TextButton stopButton{"STOP"};
     TextButton loadButton{"LOAD"};
   
-    Slider volSlider, speedSlider, posSlider; 
-    Label volLabel, speedLabel, posLabel; 
+
 
     FileChooser fChooser{"Select a file..."};
-
-
-    WaveformDisplay waveformDisplay;
-
     DJAudioPlayer* player; 
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DeckGUI)

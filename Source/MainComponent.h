@@ -20,7 +20,8 @@
     This component lives inside our window, and this is where you should put all
     your controls and content.
 */
-class MainComponent   : public AudioAppComponent
+class MainComponent   : public AudioAppComponent, 
+    public Slider::Listener
 {
 public:
     //==============================================================================
@@ -36,12 +37,17 @@ public:
     void paint (Graphics& g) override;
     void resized() override;
 
+    void sliderValueChanged(Slider* slider) override; 
+
 private:
     //==============================================================================
     // Your private member variables go here...
      
     AudioFormatManager formatManager;
     AudioThumbnailCache thumbCache{100}; 
+
+    Slider crossfade; 
+    Label crossfadeLabel; 
 
     DJAudioPlayer player1{formatManager};
     DeckGUI deckGUI1{&player1, formatManager, thumbCache}; 

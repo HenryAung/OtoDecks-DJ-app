@@ -39,7 +39,7 @@ void DJAudioPlayer::releaseResources()
 void DJAudioPlayer::loadURL(URL audioURL)
 {
     auto* reader = formatManager.createReaderFor(audioURL.createInputStream(false));
-    if (reader != nullptr) // good file!
+    if (reader != nullptr) // good file! 
     {       
         std::unique_ptr<AudioFormatReaderSource> newSource (new AudioFormatReaderSource (reader, 
 true)); 
