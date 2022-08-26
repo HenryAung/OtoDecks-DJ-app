@@ -19,12 +19,8 @@ PlayListComponent::PlayListComponent()
     // In your constructor, you should add any child components, and
     // initialise any special settings that your component needs.
 
-    trackTitles.push_back("Track 1");
-    trackTitles.push_back("Track 2");
-    trackTitles.push_back("Track 3");
-    trackTitles.push_back("Track 4");
-    trackTitles.push_back("Track 5");
-    trackTitles.push_back("Track 6");
+    //trackTitles.push_back("Track 1");
+   
 
     tableComponent.getHeader().addColumn("Track title", 1, 400);
     tableComponent.getHeader().addColumn("Artist", 2, 200);
@@ -39,6 +35,7 @@ PlayListComponent::PlayListComponent()
     addAndMakeVisible(tableComponent);
     addAndMakeVisible(searchBar);
     addAndMakeVisible(AddSongsToLibaray);
+    AddSongsToLibaray.onClick = [this]() { addSongs(); };
 }
 
 PlayListComponent::~PlayListComponent()
@@ -100,13 +97,25 @@ void PlayListComponent::paintCell(Graphics& g,
     int height,
     bool rowIsSelected)
 {
-    if (rowNumber < getNumRows()) {
-        g.drawText(trackTitles[rowNumber],
-            2, 0,
-            width - 4, height,
-            Justification::centredLeft,
-            true);
-    }; 
+    if (columnId == 1) {
+        if (rowNumber < getNumRows()) {
+            g.drawText(trackTitles[rowNumber],
+                2, 0,
+                width - 4, height,
+                Justification::centredLeft,
+                true);
+        };
+    }
+
+    if (columnId == 2) {
+        if (rowNumber < getNumRows()) {
+            g.drawText(trackTypes[rowNumber],
+                2, 0,
+                width - 4, height,
+                Justification::centredLeft,
+                true);
+        };
+    }
 }
 
 Component* PlayListComponent::refreshComponentForCell(int rowNumber,
@@ -114,6 +123,7 @@ Component* PlayListComponent::refreshComponentForCell(int rowNumber,
     bool isRowSelected,
     Component* existingComponentToUpdate)
 {
+    
     if (columnId == 5)
     {
         if (existingComponentToUpdate == nullptr)
@@ -162,4 +172,25 @@ void PlayListComponent::buttonClicked(Button* button)
 {
     int id = std::stoi(button->getComponentID().toStdString());
     DBG("PlaylistComponent::buttonClicked" + trackTitles[id]);
+}
+
+void PlayListComponent::addSongs() {
+
+    auto fileChooserFlags = FileBrowserComponent::canSelectFiles;
+    fChooser.launchAsync(fileChooserFlags, [this](const FileChooser& chooser)
+        {
+            auto file = fChooser.getResults();
+            PlayListComponent::setTracks(file);
+        }
+    );
+}
+
+void PlayListComponent::setTracks(Array<File> tracksFile)
+{
+    for (int i = 0; i < tracksFile.size(); i++)
+    {
+        trackTitles.push_back(tracksFile[i].getFileNameWithoutExtension().toStdString());
+        trackTypes.push_back(tracksFile[i].getFileExtension().toStdString()); 
+    }
+    tableComponent.updateContent();
 }

@@ -50,11 +50,20 @@ public:
 
         void buttonClicked(Button* button) override;
 
+        void addSongs(); 
+        void setTracks(Array<File> tracksFile);
+
 private:
     TextButton AddSongsToLibaray{ "Add Songs" };
+    FileChooser fChooser{ "Select a file..." };
+
+
     TextEditor searchBar;
 
     TableListBox tableComponent; 
-    std::vector<std::string> trackTitles; 
+    Array < juce:: File > tracksFile;
+    std::vector<std::string> trackTitles;
+    std::vector<std::string> trackTypes; 
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PlayListComponent)
 };
