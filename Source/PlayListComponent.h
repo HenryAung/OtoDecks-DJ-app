@@ -18,8 +18,8 @@
 /*
 */
 class PlayListComponent  : public juce::Component,
-    public juce::TableListBoxModel, 
-    public Button::Listener
+    public juce::TableListBoxModel
+    //public Button::Listener
 {
 public:
     PlayListComponent();
@@ -48,10 +48,17 @@ public:
             bool isRowSelected,
             Component* existingComponentToUpdate) override;
 
-        void buttonClicked(Button* button) override;
+       // void buttonClicked(Button* button) override;
 
         void addSongs(); 
         void setTracks(Array<File> tracksFile);
+
+        int firstDigit(int n); 
+        int lastDigit(int n); 
+
+        void loadLeft(int id); 
+        void loadRight(int id); 
+        void deleteSong(int id); 
 
 private:
     TextButton AddSongsToLibaray{ "Add Songs" };
@@ -61,9 +68,12 @@ private:
     TextEditor searchBar;
 
     TableListBox tableComponent; 
+
     Array < juce:: File > tracksFile;
     std::vector<std::string> trackTitles;
     std::vector<std::string> trackTypes; 
+
+
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PlayListComponent)
 };

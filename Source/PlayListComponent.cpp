@@ -34,6 +34,7 @@ PlayListComponent::PlayListComponent()
 
     addAndMakeVisible(tableComponent);
     addAndMakeVisible(searchBar);
+
     addAndMakeVisible(AddSongsToLibaray);
     AddSongsToLibaray.onClick = [this]() { addSongs(); };
 }
@@ -130,10 +131,12 @@ Component* PlayListComponent::refreshComponentForCell(int rowNumber,
         {
             TextButton* btn = new TextButton{ "Load Left" };
 
-            String id{ std::to_string(rowNumber) };
-            btn->setComponentID(id);
+            String id_str{ std::to_string(rowNumber) };
+           // int id = std::stoi(btn->getComponentID().toStdString());
+            int id = rowNumber; 
 
-            btn->addListener(this);
+            btn->setComponentID(id_str); 
+            btn->onClick = [this, id]() { loadLeft(id); };
             existingComponentToUpdate = btn;
         }
     }
@@ -143,10 +146,12 @@ Component* PlayListComponent::refreshComponentForCell(int rowNumber,
         {
             TextButton* btn = new TextButton{ "Load Right" };
 
-            String id{ std::to_string(rowNumber) };
-            btn->setComponentID(id);
+            String id_str{ std::to_string(rowNumber) };
+            int id = rowNumber;
 
-            btn->addListener(this);
+            btn->setComponentID(id_str);
+            btn->onClick = [this, id]() { loadRight(id); };
+            //btn->addListener(this);
             existingComponentToUpdate = btn;
         }
     }
@@ -157,10 +162,13 @@ Component* PlayListComponent::refreshComponentForCell(int rowNumber,
         {
             TextButton* btn = new TextButton{ "Delete" };
 
-            String id{ std::to_string(rowNumber) };
-            btn->setComponentID(id);
+            String id_str{ std::to_string(rowNumber) };
+            //int id = std::stoi(btn->getComponentID().toStdString());
+            int id = rowNumber; 
 
-            btn->addListener(this);
+            btn->setComponentID(id_str);
+            btn->onClick = [this, id]() { deleteSong(id); };
+           // btn->addListener(this);
             existingComponentToUpdate = btn;
         }
     }
@@ -168,11 +176,13 @@ Component* PlayListComponent::refreshComponentForCell(int rowNumber,
     return existingComponentToUpdate;
 }
 
+/*
 void PlayListComponent::buttonClicked(Button* button)
 {
     int id = std::stoi(button->getComponentID().toStdString());
     DBG("PlaylistComponent::buttonClicked" + trackTitles[id]);
 }
+*/
 
 void PlayListComponent::addSongs() {
 
@@ -192,5 +202,28 @@ void PlayListComponent::setTracks(Array<File> tracksFile)
         trackTitles.push_back(tracksFile[i].getFileNameWithoutExtension().toStdString());
         trackTypes.push_back(tracksFile[i].getFileExtension().toStdString()); 
     }
+    tableComponent.updateContent();
+}
+
+void PlayListComponent::loadLeft(int id ) {
+   // player->loadURL(tracksFile[id]); // your player
+   // player->start();
+
+    DBG("Player 1 song loaded :: " << id); 
+}
+
+void PlayListComponent::loadRight(int id) {
+   // player->loadURL(ftracksFile[id]); // your player
+  //  player->start();
+
+    DBG("Player 2 song loaded :: " << id); 
+}
+
+void PlayListComponent::deleteSong(int id) {
+    DBG("Song Deleted"); 
+    tracksFile.remove(id); 
+    trackTitles.erase(trackTitles.begin() + id); 
+    trackTypes.erase(trackTypes.begin() + id); 
+
     tableComponent.updateContent();
 }
