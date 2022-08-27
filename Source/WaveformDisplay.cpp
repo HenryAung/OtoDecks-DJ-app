@@ -69,6 +69,7 @@ void WaveformDisplay::loadURL(URL audioURL)
 {
   audioThumb.clear();
   fileLoaded  = audioThumb.setSource(new URLInputSource(audioURL));
+
   if (fileLoaded)
   {
       DBG("wfd: loaded! "); 

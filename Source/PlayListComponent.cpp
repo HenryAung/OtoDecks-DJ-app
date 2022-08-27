@@ -14,7 +14,9 @@
 using namespace juce; 
 
 //==============================================================================
-PlayListComponent::PlayListComponent()
+PlayListComponent::PlayListComponent(
+    DeckGUI* _deckgui1, DeckGUI* _deckgui2) : 
+    deckgui1 (_deckgui1), deckgui2 (_deckgui2) 
 {
     // In your constructor, you should add any child components, and
     // initialise any special settings that your component needs.
@@ -176,44 +178,39 @@ Component* PlayListComponent::refreshComponentForCell(int rowNumber,
     return existingComponentToUpdate;
 }
 
-/*
-void PlayListComponent::buttonClicked(Button* button)
-{
-    int id = std::stoi(button->getComponentID().toStdString());
-    DBG("PlaylistComponent::buttonClicked" + trackTitles[id]);
-}
-*/
+
 
 void PlayListComponent::addSongs() {
 
     auto fileChooserFlags = FileBrowserComponent::canSelectFiles;
     fChooser.launchAsync(fileChooserFlags, [this](const FileChooser& chooser)
         {
-            auto file = fChooser.getResults();
+            auto file = fChooser.getResult();
             PlayListComponent::setTracks(file);
+            
         }
     );
 }
 
-void PlayListComponent::setTracks(Array<File> tracksFile)
+void PlayListComponent::setTracks(File file)
 {
-    for (int i = 0; i < tracksFile.size(); i++)
-    {
-        trackTitles.push_back(tracksFile[i].getFileNameWithoutExtension().toStdString());
-        trackTypes.push_back(tracksFile[i].getFileExtension().toStdString()); 
-    }
-    tableComponent.updateContent();
+        tracksFile.add(file);
+        tracksURL.push_back(file.getFullPathName().toStdString()); 
+        trackTitles.push_back(file.getFileNameWithoutExtension().toStdString());
+        trackTypes.push_back(file.getFileExtension().toStdString()); 
+        
+        tableComponent.updateContent();
 }
 
 void PlayListComponent::loadLeft(int id ) {
-   // player->loadURL(tracksFile[id]); // your player
+  deckgui1->loadSong(tracksFile[id]); // your player
    // player->start();
 
     DBG("Player 1 song loaded :: " << id); 
 }
 
 void PlayListComponent::loadRight(int id) {
-   // player->loadURL(ftracksFile[id]); // your player
+    deckgui2->loadSong(tracksFile[id]); // your player
   //  player->start();
 
     DBG("Player 2 song loaded :: " << id); 

@@ -28,7 +28,6 @@ void DJAudioPlayer::prepareToPlay (int samplesPerBlockExpected, double sampleRat
 void DJAudioPlayer::getNextAudioBlock (const AudioSourceChannelInfo& bufferToFill)
 {
     resampleSource.getNextAudioBlock(bufferToFill);
-
 }
 void DJAudioPlayer::releaseResources()
 {
@@ -38,15 +37,19 @@ void DJAudioPlayer::releaseResources()
 
 void DJAudioPlayer::loadURL(URL audioURL)
 {
-    auto* reader = formatManager.createReaderFor(audioURL.createInputStream(false));
-    if (reader != nullptr) // good file! 
-    {       
-        std::unique_ptr<AudioFormatReaderSource> newSource (new AudioFormatReaderSource (reader, 
-true)); 
+    auto* reader = formatManager.createReaderFor(audioURL.createInputStream(false)); //
+    if (reader != nullptr) // good file!  
+    {   
+        DBG("Songs is loaded to audio player and can be listened");
+        std::unique_ptr<AudioFormatReaderSource> newSource (new AudioFormatReaderSource (reader, true)); 
         transportSource.setSource (newSource.get(), 0, nullptr, reader->sampleRate);             
         readerSource.reset (newSource.release());          
     }
+    if (reader == nullptr) {
+        DBG("Songs is not a good file"); 
+    }
 }
+
 void DJAudioPlayer::setGain(double gain)
 {
     if (gain < 0 || gain > 1.0)

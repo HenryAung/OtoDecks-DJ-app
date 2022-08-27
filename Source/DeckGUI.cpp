@@ -115,9 +115,7 @@ void DeckGUI::buttonClicked(Button* button)
         FileBrowserComponent::canSelectFiles;
         fChooser.launchAsync(fileChooserFlags, [this](const FileChooser& chooser)
         {
-            player->loadURL(URL{chooser.getResult()});
-            // and now the waveformDisplay as well
-            waveformDisplay.loadURL(URL{chooser.getResult()}); 
+                DeckGUI::loadSong(fChooser.getResult()); 
         });
     }
 }
@@ -163,5 +161,8 @@ void DeckGUI::timerCallback()
 }
 
 
-    
-
+void DeckGUI::loadSong(File file ) {
+    player->loadURL(URL{ file });
+    // and now the waveformDisplay as well
+    waveformDisplay.loadURL(URL{ file });
+}

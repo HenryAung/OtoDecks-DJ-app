@@ -13,6 +13,8 @@
 #include <JuceHeader.h>
 #include <vector>
 #include <string>
+#include "DJAudioPlayer.h"
+#include "DeckGUI.h"
 
 //==============================================================================
 /*
@@ -22,7 +24,9 @@ class PlayListComponent  : public juce::Component,
     //public Button::Listener
 {
 public:
-    PlayListComponent();
+    PlayListComponent(// DJAudioPlayer* player1, DJAudioPlayer* player2
+        DeckGUI* deckgui1, DeckGUI* deckgui2
+    );
     ~PlayListComponent() override;
 
     void paint (juce::Graphics&) override;
@@ -51,10 +55,7 @@ public:
        // void buttonClicked(Button* button) override;
 
         void addSongs(); 
-        void setTracks(Array<File> tracksFile);
-
-        int firstDigit(int n); 
-        int lastDigit(int n); 
+        void setTracks(File file);
 
         void loadLeft(int id); 
         void loadRight(int id); 
@@ -67,13 +68,19 @@ private:
 
     TextEditor searchBar;
 
-    TableListBox tableComponent; 
+    TableListBox tableComponent;
 
-    Array < juce:: File > tracksFile;
+   // std::vector< juce::File > tracksFile; 
+    Array< juce::File > tracksFile;
+
+    std::vector < std::string > tracksURL;
     std::vector<std::string> trackTitles;
     std::vector<std::string> trackTypes; 
 
+   // DJAudioPlayer* player1; 
+   // DJAudioPlayer* player2; 
 
-
+    DeckGUI* deckgui1; 
+    DeckGUI* deckgui2;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PlayListComponent)
 };

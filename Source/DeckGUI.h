@@ -42,6 +42,7 @@ public:
     void filesDropped (const StringArray &files, int x, int y) override; 
 
     void timerCallback() override; 
+    void loadSong(File file); 
 
 private:
     WaveformDisplay waveformDisplay;
