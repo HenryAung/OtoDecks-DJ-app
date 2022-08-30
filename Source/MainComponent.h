@@ -13,6 +13,7 @@
 #include "DeckGUI.h"
 #include"WaveformDisplay.h"
 #include"PlayListComponent.h"
+#include"StyleSheet.h"
 
 
 //==============================================================================
@@ -42,12 +43,13 @@ public:
 private:
     //==============================================================================
     // Your private member variables go here...
+    StyleSheet myCustonSytle; 
      
     AudioFormatManager formatManager;
     AudioThumbnailCache thumbCache{100}; 
 
     Slider crossfade; 
-    Label crossfadeLabel; 
+    //Label crossfadeLabel; 
 
     DJAudioPlayer player1{formatManager};
     DeckGUI deckGUI1{&player1, formatManager, thumbCache}; 

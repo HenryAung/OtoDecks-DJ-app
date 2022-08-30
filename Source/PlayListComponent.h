@@ -20,8 +20,8 @@
 /*
 */
 class PlayListComponent  : public juce::Component,
-    public juce::TableListBoxModel
-    //public Button::Listener
+    public juce::TableListBoxModel,
+    public juce::TextEditor::Listener
 {
 public:
     PlayListComponent(// DJAudioPlayer* player1, DJAudioPlayer* player2
@@ -52,10 +52,10 @@ public:
             bool isRowSelected,
             Component* existingComponentToUpdate) override;
 
-       // void buttonClicked(Button* button) override;
-
         void addSongs(); 
         void setTracks(File file);
+        void searchFilter(std::string text); 
+        void textEditorTextChanged(TextEditor& editor) override; 
 
         void loadLeft(int id); 
         void loadRight(int id); 
@@ -65,7 +65,7 @@ private:
     TextButton AddSongsToLibaray{ "Add Songs" };
     FileChooser fChooser{ "Select a file..." };
 
-
+    
     TextEditor searchBar;
 
     TableListBox tableComponent;
@@ -76,9 +76,6 @@ private:
     std::vector < std::string > tracksURL;
     std::vector<std::string> trackTitles;
     std::vector<std::string> trackTypes; 
-
-   // DJAudioPlayer* player1; 
-   // DJAudioPlayer* player2; 
 
     DeckGUI* deckgui1; 
     DeckGUI* deckgui2;

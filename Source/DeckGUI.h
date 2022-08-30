@@ -13,6 +13,7 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "DJAudioPlayer.h"
 #include "WaveformDisplay.h"
+#include "StyleSheet.h"
 
 //==============================================================================
 /*
@@ -46,17 +47,19 @@ public:
 
 private:
     WaveformDisplay waveformDisplay;
-    Slider volSlider, speedSlider, posSlider;
+    Slider posSlider;
+    CustomDial volSlider, speedSlider; 
     Label volLabel, speedLabel, posLabel;
 
     TextButton playButton{"PLAY"};
-    TextButton stopButton{"STOP"};
+    TextButton pauseButton{"PAUSE"};
     TextButton loadButton{"LOAD"};
-  
-
+ 
 
     FileChooser fChooser{"Select a file..."};
     DJAudioPlayer* player; 
+
+    bool isLoaded = false; 
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DeckGUI)
 };

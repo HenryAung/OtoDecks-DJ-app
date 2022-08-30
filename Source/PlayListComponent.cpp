@@ -10,7 +10,8 @@
 
 #include <JuceHeader.h>
 #include "PlayListComponent.h"
-
+#include <algorithm>  // for copy_if
+#include <iterator>  
 using namespace juce; 
 
 //==============================================================================
@@ -25,17 +26,17 @@ PlayListComponent::PlayListComponent(
    
 
     tableComponent.getHeader().addColumn("Track title", 1, 400);
-    tableComponent.getHeader().addColumn("Artist", 2, 200);
-    tableComponent.getHeader().addColumn("Audio Type", 3, 130);
-    tableComponent.getHeader().addColumn("Duration", 4, 130);
-    tableComponent.getHeader().addColumn("", 5, 120);
-    tableComponent.getHeader().addColumn("", 6, 120);
+    tableComponent.getHeader().addColumn("Audio Type", 2, 200);
+    tableComponent.getHeader().addColumn("Duration", 4, 200);
+    tableComponent.getHeader().addColumn("", 5, 150);
+    tableComponent.getHeader().addColumn("", 6, 150);
     tableComponent.getHeader().addColumn("", 7, 100);
 
     tableComponent.setModel(this);
 
     addAndMakeVisible(tableComponent);
     addAndMakeVisible(searchBar);
+    searchBar.addListener(this); 
 
     addAndMakeVisible(AddSongsToLibaray);
     AddSongsToLibaray.onClick = [this]() { addSongs(); };
@@ -54,7 +55,7 @@ void PlayListComponent::paint (juce::Graphics& g)
        drawing code..
     */
 
-    g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));   // clear the background
+    g.fillAll(Colours::lightcoral); 
 
     g.setColour (juce::Colours::grey);
     g.drawRect (getLocalBounds(), 1);   // draw an outline around the component
@@ -86,10 +87,10 @@ void PlayListComponent::paintRowBackground(Graphics& g,
 {
     if (rowIsSelected)
     {
-        g.fillAll(Colours::orange);
+        g.fillAll(Colours::darkgrey);
     }
     else {
-        g.fillAll(Colours::darkgrey);
+        g.fillAll(Colours::lightcoral);
     }
 }
 
@@ -134,7 +135,6 @@ Component* PlayListComponent::refreshComponentForCell(int rowNumber,
             TextButton* btn = new TextButton{ "Load Left" };
 
             String id_str{ std::to_string(rowNumber) };
-           // int id = std::stoi(btn->getComponentID().toStdString());
             int id = rowNumber; 
 
             btn->setComponentID(id_str); 
@@ -153,7 +153,7 @@ Component* PlayListComponent::refreshComponentForCell(int rowNumber,
 
             btn->setComponentID(id_str);
             btn->onClick = [this, id]() { loadRight(id); };
-            //btn->addListener(this);
+ 
             existingComponentToUpdate = btn;
         }
     }
@@ -165,12 +165,11 @@ Component* PlayListComponent::refreshComponentForCell(int rowNumber,
             TextButton* btn = new TextButton{ "Delete" };
 
             String id_str{ std::to_string(rowNumber) };
-            //int id = std::stoi(btn->getComponentID().toStdString());
             int id = rowNumber; 
 
             btn->setComponentID(id_str);
             btn->onClick = [this, id]() { deleteSong(id); };
-           // btn->addListener(this);
+
             existingComponentToUpdate = btn;
         }
     }
@@ -204,23 +203,55 @@ void PlayListComponent::setTracks(File file)
 
 void PlayListComponent::loadLeft(int id ) {
   deckgui1->loadSong(tracksFile[id]); // your player
-   // player->start();
-
-    DBG("Player 1 song loaded :: " << id); 
 }
 
 void PlayListComponent::loadRight(int id) {
     deckgui2->loadSong(tracksFile[id]); // your player
-  //  player->start();
-
-    DBG("Player 2 song loaded :: " << id); 
+    PlayListComponent::searchFilter("b");
 }
 
 void PlayListComponent::deleteSong(int id) {
-    DBG("Song Deleted"); 
+
     tracksFile.remove(id); 
     trackTitles.erase(trackTitles.begin() + id); 
     trackTypes.erase(trackTypes.begin() + id); 
 
     tableComponent.updateContent();
 }
+
+void PlayListComponent::textEditorTextChanged(TextEditor& editor) {
+    auto text = searchBar.getText().toLowerCase().toStdString(); 
+    DBG("the input text is " << text);
+
+    PlayListComponent::searchFilter(text); 
+    
+}
+ 
+
+void PlayListComponent::searchFilter(std::string text) {
+
+    /*
+    std::string grapText = text;
+    std::vector<int> filteredSongs;
+    
+    //std::copy_if(trackTitles.begin(), trackTitles.end(), std::back_inserter(filteredSongs), [text](auto s) { return s.find(text) != std::string::npos; });
+
+        
+  std::copy_if(trackTitles.begin(), trackTitles.end(), back_inserter(filteredSongs), [grapText](auto s) { return s.find(text) != std::string::npos; });
+    */
+      
+
+  /*
+    std::vector<int> filteredSongs;
+    std::copy_if(trackTitles.begin(), trackTitles.end(), back_inserter(filteredSongs), [](auto s) { return s.find("b") != std::string::npos; });
+
+    for (auto& i : filteredSongs) {
+        DBG("Filtered songs are " << filteredSongs[i]);
+    }
+  */
+    
+    Array< juce::File > filteredTracksFile;
+  
+};
+
+

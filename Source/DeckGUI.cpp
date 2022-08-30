@@ -17,12 +17,9 @@ DeckGUI::DeckGUI(DJAudioPlayer* _player,
                 AudioThumbnailCache & 	cacheToUse
            ) : player(_player), 
                waveformDisplay(formatManagerToUse, cacheToUse)
+    
 {
     addAndMakeVisible(waveformDisplay);
-
-    getLookAndFeel().setColour(Slider::thumbColourId, Colours::azure); 
-    getLookAndFeel().setColour(Slider::rotarySliderFillColourId, Colours::aliceblue); 
-    getLookAndFeel().setColour(Slider::rotarySliderOutlineColourId, Colours::black); 
 
     addAndMakeVisible(posSlider);
     posSlider.addListener(this);
@@ -34,17 +31,12 @@ DeckGUI::DeckGUI(DJAudioPlayer* _player,
     addAndMakeVisible(volSlider);
     volSlider.addListener(this);
     volSlider.setRange(0.0f, 2.0f, 0.01f);
-    volSlider.setSliderStyle(Slider::SliderStyle::Rotary);
-    volSlider.setTextBoxStyle(Slider::TextBoxBelow, false, 50, 20);
-    volSlider.setValue(1.0f);
     volLabel.setText("Volume" , dontSendNotification); 
     volLabel.attachToComponent(&volSlider, false); 
 
     addAndMakeVisible(speedSlider);
     speedSlider.addListener(this);
-    speedSlider.setRange(0.1f, 10.0f, 0.01f);
-    speedSlider.setSliderStyle(Slider::SliderStyle::Rotary);
-    speedSlider.setTextBoxStyle(Slider::TextBoxBelow, false, 50, 25);
+    speedSlider.setRange(0.1f, 5.0f, 0.01f);
     speedSlider.setTextValueSuffix(" x"); 
     speedLabel.setText("Speed", dontSendNotification); 
     speedLabel.attachToComponent(&speedSlider, false); 
@@ -53,8 +45,8 @@ DeckGUI::DeckGUI(DJAudioPlayer* _player,
     addAndMakeVisible(playButton);
     playButton.addListener(this);
 
-    addAndMakeVisible(stopButton);
-    stopButton.addListener(this);
+    addAndMakeVisible(pauseButton);
+    pauseButton.addListener(this);
 
     addAndMakeVisible(loadButton); 
     loadButton.addListener(this);
@@ -71,11 +63,31 @@ DeckGUI::~DeckGUI()
 
 void DeckGUI::paint (Graphics& g)
 {
-    g.fillAll (Colours::dimgrey);   // clear the background
+    g.fillAll (Colours::lightcoral);   // clear the background
 
-    g.setColour (Colours::black);
+    g.setColour (Colours::lightgrey);
     g.drawRect (getLocalBounds(), 1);   // draw an outline around the component
 
+    
+    double W = getWidth() / 8;
+    double bigCircleSize = W * 2.7;
+    double bigCircleX = ((8*W) - bigCircleSize) / 2; 
+    double bigCircleY = (getHeight() - bigCircleSize) * 0.7;
+
+    double smallCircleSize = W * 0.6; 
+    double smallCircleX = ((8*W) - smallCircleSize) / 2; 
+    double smallCircleY = bigCircleY + ((bigCircleSize - smallCircleSize) / 2);
+
+    g.setColour(Colours::darkcyan);
+    g.fillEllipse(bigCircleX, bigCircleY , bigCircleSize , bigCircleSize);
+
+    g.setColour(Colours::azure); 
+    g.fillEllipse(smallCircleX, smallCircleY , smallCircleSize, smallCircleSize);
+
+    if (isLoaded) {
+        g.drawText("Songs Name", smallCircleX, smallCircleY - 10, smallCircleSize, smallCircleSize, Justification::centred, true); 
+    }
+    
 } 
 
 void DeckGUI::resized()
@@ -84,15 +96,15 @@ void DeckGUI::resized()
     double columnW = getWidth() / 8; 
 
     waveformDisplay.setBounds(0, 0, getWidth(), rowH* 1.3); 
-    posSlider.setBounds(80, rowH * 1.3, getWidth()- 80, rowH * 0.4);
+    posSlider.setBounds(80, rowH * 1.4, getWidth()- 80, rowH * 0.4);
  
-    volSlider.setBounds(0, rowH * 2.0,columnW * 4 , rowH * 2.3);
-    speedSlider.setBounds(columnW * 4, rowH * 2.0, columnW * 4, rowH * 2.3);
+    volSlider.setBounds(0, rowH * 2.35,columnW * 4 , rowH * 1.8);
+    speedSlider.setBounds(columnW * 4, rowH * 2.35, columnW * 4, rowH * 1.8);
     
 
-    playButton.setBounds(columnW, rowH * 5, columnW, rowH);
-    stopButton.setBounds(columnW * 4, rowH * 5, columnW, rowH);
-    loadButton.setBounds(columnW * 2.5, rowH * 6, columnW, rowH);
+    playButton.setBounds(columnW * 1.4 , rowH * 7.1, columnW * 0.8 , rowH * 0.6);
+    pauseButton.setBounds(columnW * 3.6, rowH * 7.1, columnW * 0.8, rowH * 0.6);
+    loadButton.setBounds(columnW * 5.8, rowH * 7.1, columnW * 0.8, rowH * 0.6);
 
 }
 
@@ -103,7 +115,7 @@ void DeckGUI::buttonClicked(Button* button)
         DBG("Play button was clicked "); 
         player->start();
     }
-     if (button == &stopButton)
+     if (button == &pauseButton)
     {
          DBG("Stop button was clicked "); 
         player->stop();
@@ -163,6 +175,7 @@ void DeckGUI::timerCallback()
 
 void DeckGUI::loadSong(File file ) {
     player->loadURL(URL{ file });
+    isLoaded = true; 
     // and now the waveformDisplay as well
     waveformDisplay.loadURL(URL{ file });
 }

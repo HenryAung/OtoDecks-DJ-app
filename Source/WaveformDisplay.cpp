@@ -33,7 +33,7 @@ void WaveformDisplay::paint (Graphics& g)
 {
     g.fillAll (Colours::darkslategrey);   // clear the background
 
-    g.setColour (Colours::black);
+    g.setColour (Colours::lightgrey);
     g.drawRect (getLocalBounds(), 1);   // draw an outline around the component
 
     g.setColour (Colours::azure);

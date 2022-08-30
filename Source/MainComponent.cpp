@@ -13,6 +13,7 @@ MainComponent::MainComponent()
 {
     // Make sure you set the size of the component after
     // you add any child components.
+    juce::LookAndFeel::setDefaultLookAndFeel(&myCustonSytle); 
     setSize (1200, 800);
 
     // Some platforms require permissions to open input channels so request that here
@@ -35,8 +36,9 @@ MainComponent::MainComponent()
     crossfade.addListener(this);
     crossfade.setRange(-1.0f, 0.99999f, 0.01f);
     crossfade.setTextBoxStyle(Slider::NoTextBox, false, 0, 0);
-    crossfadeLabel.setText("Vol Crossfade", dontSendNotification);
-    crossfadeLabel.attachToComponent(&crossfade, true);
+   // crossfadeLabel.setText("Vol Crossfade", dontSendNotification);
+   // crossfadeLabel.attachToComponent(&crossfade, true);
+   // crossfadeLabel.setJustificationType(Justification::centredBottom); 
 
     addAndMakeVisible(playlistComponent); 
 
@@ -46,6 +48,7 @@ MainComponent::MainComponent()
 MainComponent::~MainComponent()
 {
     // This shuts down the audio device and clears the audio source.
+    juce::LookAndFeel::setDefaultLookAndFeel(nullptr); 
     shutdownAudio();
 }
 
@@ -80,21 +83,20 @@ void MainComponent::releaseResources()
 //==============================================================================
 void MainComponent::paint (Graphics& g)
 {
-    // (Our component is opaque, so we must completely fill the background with a solid colour)
-    g.fillAll (getLookAndFeel().findColour (ResizableWindow::backgroundColourId));
-    
-
-    // You can add your drawing code here!
+    g.fillAll(Colours::darkslategrey);
+    g.setColour(Colours::azure); 
+    g.drawText("Left Speaker", 0, getHeight() * 7.4 / 12, getWidth() / 12, getHeight() / 12 * 0.8, Justification::centred, true);
+    g.drawText("Right Speaker", getWidth() / 12 * 11, getHeight() * 7.4 / 12, getWidth() / 12, getHeight() / 12 * 0.8, Justification::centred, true);
 }
 
 void MainComponent::resized()
 {
     double height = getHeight() / 12; 
     double width = getWidth() / 12; 
-    deckGUI1.setBounds(0, 0, getWidth()/2, height * 8 );
-    deckGUI2.setBounds(getWidth()/2, 0, getWidth()/2, height * 8);
-    crossfade.setBounds(width, height * 8, width * 10, height * 0.5); 
-    playlistComponent.setBounds(0, height * 8.5, getWidth(), getHeight() * 4);
+    deckGUI1.setBounds(0, 0, getWidth()/2, height * 7.5 );
+    deckGUI2.setBounds(getWidth()/2, 0, getWidth()/2, height * 7.5);
+    crossfade.setBounds(width, height * 7.5, width * 10, height * 0.8 ); 
+    playlistComponent.setBounds(0, height * 8.3, getWidth(), getHeight() * 3.7);
 }
 
 void MainComponent::sliderValueChanged(Slider* slider) {
