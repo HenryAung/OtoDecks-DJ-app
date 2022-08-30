@@ -18,42 +18,47 @@
 //==============================================================================
 /*
 */
-class DeckGUI    : public Component,
-                   public Button::Listener, 
-                   public Slider::Listener, 
-                   public FileDragAndDropTarget, 
-                   public Timer
+class DeckGUI : public Component,
+    public Button::Listener,
+    public Slider::Listener,
+    public FileDragAndDropTarget,
+    public Timer
 {
 public:
-    DeckGUI(DJAudioPlayer* player, 
-           AudioFormatManager & 	formatManagerToUse,
-           AudioThumbnailCache & 	cacheToUse );
+    DeckGUI(DJAudioPlayer* player,
+        AudioFormatManager& formatManagerToUse,
+        AudioThumbnailCache& cacheToUse);
     ~DeckGUI();
 
-    void paint (Graphics&) override;
+    void paint(Graphics&) override;
     void resized() override;
 
-     /** implement Button::Listener */
-    void buttonClicked (Button *) override;
+    /** implement Button::Listener */
+    void buttonClicked(Button*) override;
 
     /** implement Slider::Listener */
-    void sliderValueChanged (Slider *slider) override;
+    void sliderValueChanged(Slider* slider) override;
 
-    bool isInterestedInFileDrag (const StringArray &files) override;
-    void filesDropped (const StringArray &files, int x, int y) override; 
+    bool isInterestedInFileDrag(const StringArray& files) override;
+    void filesDropped(const StringArray& files, int x, int y) override;
 
-    void timerCallback() override; 
-    void loadSong(File file); 
+    void timerCallback() override;
+    void loadSong(File file);
 
 private:
     WaveformDisplay waveformDisplay;
     Slider posSlider;
-    CustomDial volSlider, speedSlider; 
+    CustomDial volSlider, speedSlider;
     Label volLabel, speedLabel, posLabel;
 
-    TextButton playButton{"PLAY"};
-    TextButton pauseButton{"PAUSE"};
-    TextButton loadButton{"LOAD"};
+    TextButton  playButton{ "PLAY" }, 
+                pauseButton{ "PAUSE" }, 
+                loadButton{ "LOAD" }, 
+                stopButton{ "STOP" }, 
+                forwardButton{ "FROWARD" }, 
+                backwardButton{ "BACKWARD" }, 
+                loopButton{ "LOOP" }; 
+
  
 
     FileChooser fChooser{"Select a file..."};

@@ -48,7 +48,19 @@ DeckGUI::DeckGUI(DJAudioPlayer* _player,
     addAndMakeVisible(pauseButton);
     pauseButton.addListener(this);
 
-    addAndMakeVisible(loadButton); 
+    addAndMakeVisible(stopButton);
+    stopButton.addListener(this);
+
+    addAndMakeVisible(forwardButton);
+    forwardButton.addListener(this);
+
+    addAndMakeVisible(backwardButton);
+    backwardButton.addListener(this);
+
+    addAndMakeVisible(loopButton);
+    loopButton.addListener(this);
+
+    addAndMakeVisible(loadButton);
     loadButton.addListener(this);
 
     startTimer(500);
@@ -102,10 +114,13 @@ void DeckGUI::resized()
     speedSlider.setBounds(columnW * 4, rowH * 2.35, columnW * 4, rowH * 1.8);
     
 
-    playButton.setBounds(columnW * 1.4 , rowH * 7.1, columnW * 0.8 , rowH * 0.6);
-    pauseButton.setBounds(columnW * 3.6, rowH * 7.1, columnW * 0.8, rowH * 0.6);
-    loadButton.setBounds(columnW * 5.8, rowH * 7.1, columnW * 0.8, rowH * 0.6);
-
+    playButton.setBounds(columnW * 0.5 , rowH * 7.1, columnW  , rowH * 0.6);
+    pauseButton.setBounds(columnW * 2, rowH * 7.1, columnW , rowH * 0.6);
+    stopButton.setBounds(columnW * 3.5, rowH * 7.1, columnW , rowH * 0.6);
+    forwardButton.setBounds(columnW * 5, rowH * 7.1, columnW , rowH * 0.6);
+    backwardButton.setBounds(columnW * 6.5, rowH * 7.1, columnW , rowH * 0.6);
+    loopButton.setBounds(columnW * 3.6, rowH , columnW * 0.8, rowH * 0.6);
+    loadButton.setBounds(columnW * 5.8, rowH , columnW * 0.8, rowH * 0.6);
 }
 
 void DeckGUI::buttonClicked(Button* button)
@@ -118,9 +133,27 @@ void DeckGUI::buttonClicked(Button* button)
      if (button == &pauseButton)
     {
          DBG("Stop button was clicked "); 
-        player->stop();
-
+        player->pause();
     }
+
+     if (button == &stopButton)
+     {
+         DBG("Stop button was clicked ");
+         player->stop();
+     }
+
+     if (button == &backwardButton)
+     {
+         player->backward(); 
+     }
+     if (button == &forwardButton)
+     {
+         player->forward(); 
+     }
+     if (button == &loopButton)
+     {
+         player->setLoop(); 
+     }
        if (button == &loadButton)
     {
        auto fileChooserFlags =  

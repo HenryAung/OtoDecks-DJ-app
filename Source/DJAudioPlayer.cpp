@@ -10,8 +10,8 @@ Author:  matthew
 
 #include "DJAudioPlayer.h"
 
-DJAudioPlayer::DJAudioPlayer(AudioFormatManager& _formatManager) 
-: formatManager(_formatManager)
+DJAudioPlayer::DJAudioPlayer(AudioFormatManager& _formatManager)
+    : formatManager(_formatManager), islooping(false) 
 {
 
 }
@@ -93,9 +93,33 @@ void DJAudioPlayer::start()
 {
     transportSource.start();
 }
-void DJAudioPlayer::stop()
+void DJAudioPlayer::pause()
 {
   transportSource.stop();
+}
+
+void DJAudioPlayer::stop() {
+    transportSource.stop(); 
+    transportSource.setPosition(0); 
+
+}
+
+void DJAudioPlayer::forward() {
+    int currentPosition = transportSource.getCurrentPosition(); 
+    transportSource.setPosition(currentPosition  + 10.0); 
+}
+
+void DJAudioPlayer::backward() {
+    int currentPosition = transportSource.getCurrentPosition(); 
+    transportSource.setPosition(currentPosition - 10.0); 
+}
+
+void DJAudioPlayer::setLoop() {
+    if (islooping == false) {
+        islooping = true; 
+        transportSource.setLooping(true);
+    }
+    
 }
 
 double DJAudioPlayer::getPositionRelative()

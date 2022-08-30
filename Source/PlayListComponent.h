@@ -25,8 +25,7 @@ class PlayListComponent  : public juce::Component,
 {
 public:
     PlayListComponent(// DJAudioPlayer* player1, DJAudioPlayer* player2
-        DeckGUI* deckgui1, DeckGUI* deckgui2
-    );
+        DeckGUI* deckgui1, DeckGUI* deckgui2, AudioFormatManager& _formatManager);
     ~PlayListComponent() override;
 
     void paint (juce::Graphics&) override;
@@ -62,6 +61,10 @@ public:
         void deleteSong(int id); 
 
 private:
+    AudioFormatManager& formatManager;
+    AudioTransportSource transportSource;
+    std::unique_ptr<AudioFormatReaderSource> readerSource;
+
     TextButton AddSongsToLibaray{ "Add Songs" };
     FileChooser fChooser{ "Select a file..." };
 

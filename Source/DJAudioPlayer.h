@@ -31,6 +31,10 @@ class DJAudioPlayer : public AudioSource {
 
     void start();
     void stop();
+    void pause(); 
+    void forward(); 
+    void backward(); 
+    void setLoop(); 
 
     /** get the relative position of the playhead */
     double getPositionRelative();
@@ -41,6 +45,7 @@ private:
     AudioTransportSource transportSource; 
     ResamplingAudioSource resampleSource{&transportSource, false, 2};
 
+    bool islooping; 
 };
 
 

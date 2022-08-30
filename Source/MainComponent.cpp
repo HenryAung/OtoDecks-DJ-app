@@ -34,7 +34,7 @@ MainComponent::MainComponent()
 
     addAndMakeVisible(crossfade); 
     crossfade.addListener(this);
-    crossfade.setRange(-1.0f, 0.99999f, 0.01f);
+    crossfade.setRange(-2.0f, 1.99999f, 0.01f);
     crossfade.setTextBoxStyle(Slider::NoTextBox, false, 0, 0);
    // crossfadeLabel.setText("Vol Crossfade", dontSendNotification);
    // crossfadeLabel.attachToComponent(&crossfade, true);
@@ -100,14 +100,14 @@ void MainComponent::resized()
 }
 
 void MainComponent::sliderValueChanged(Slider* slider) {
-    float crossfadeValue, crossFadeLeft = 1.0, crossFadeRight = 1.0; 
+    float crossfadeValue, crossFadeLeft = 2.0, crossFadeRight = 2.0; 
     if (slider == &crossfade) {
         crossfadeValue = crossfade.getValue();
         if (crossfadeValue < 0) {
-            crossFadeRight = 1 + crossfadeValue; 
+            crossFadeRight = 2 + crossfadeValue; 
         } 
         else if (crossfadeValue > 0) {
-            crossFadeLeft =  1.00000001 - crossfadeValue; 
+            crossFadeLeft =  2.00000001 - crossfadeValue; 
         }
         
         DBG("crossfade Left :: " << crossFadeLeft);

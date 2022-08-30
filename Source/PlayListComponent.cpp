@@ -16,8 +16,8 @@ using namespace juce;
 
 //==============================================================================
 PlayListComponent::PlayListComponent(
-    DeckGUI* _deckgui1, DeckGUI* _deckgui2) : 
-    deckgui1 (_deckgui1), deckgui2 (_deckgui2) 
+    DeckGUI* _deckgui1, DeckGUI* _deckgui2, AudioFormatManager& _formatManager)
+    :  deckgui1 (_deckgui1), deckgui2 (_deckgui2), formatManager(_formatManager)
 {
     // In your constructor, you should add any child components, and
     // initialise any special settings that your component needs.
@@ -48,13 +48,6 @@ PlayListComponent::~PlayListComponent()
 
 void PlayListComponent::paint (juce::Graphics& g)
 {
-    /* This demo code just fills the component's background and
-       draws some placeholder text to get you started.
-
-       You should replace everything in this method with your own
-       drawing code..
-    */
-
     g.fillAll(Colours::lightcoral); 
 
     g.setColour (juce::Colours::grey);
@@ -100,7 +93,7 @@ void PlayListComponent::paintCell(Graphics& g,
     int width,
     int height,
     bool rowIsSelected)
-{
+{   // song name 
     if (columnId == 1) {
         if (rowNumber < getNumRows()) {
             g.drawText(trackTitles[rowNumber],
@@ -111,6 +104,7 @@ void PlayListComponent::paintCell(Graphics& g,
         };
     }
 
+    // song type 
     if (columnId == 2) {
         if (rowNumber < getNumRows()) {
             g.drawText(trackTypes[rowNumber],
@@ -120,6 +114,36 @@ void PlayListComponent::paintCell(Graphics& g,
                 true);
         };
     }
+
+    // song duration
+    if (columnId == 4) {
+        if (rowNumber < getNumRows()) {
+
+            auto* reader = formatManager.createReaderFor( tracksFile[rowNumber]); //
+            if (reader != nullptr) // good file!  
+            {
+                DBG("Songs is loaded to audio player and can be listened");
+                std::unique_ptr<AudioFormatReaderSource> newSource(new AudioFormatReaderSource(reader, true));
+                transportSource.setSource(newSource.get(), 0, nullptr, reader->sampleRate);
+                readerSource.reset(newSource.release());
+            }
+            if (reader == nullptr) {
+                DBG("Songs is not a good file");
+            }
+            
+            int totalSongLenghtInSecond = transportSource.getLengthInSeconds();
+
+            std::string songLengthInMin_str = std::to_string(totalSongLenghtInSecond / 60);
+            std::string songLengthInSec_str = std::to_string(totalSongLenghtInSecond % 60);
+            
+            g.drawText( songLengthInMin_str + ":" + songLengthInSec_str,
+                2, 0,
+                width - 4, height,
+                Justification::centredLeft,
+                true);
+        };
+    }
+    
 }
 
 Component* PlayListComponent::refreshComponentForCell(int rowNumber,

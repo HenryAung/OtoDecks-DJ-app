@@ -47,7 +47,7 @@ void WaveformDisplay::paint (Graphics& g)
         1.0f
       );
       g.setColour(Colours::black);
-      g.drawRect(position * getWidth(), 0, getWidth() / 20, getHeight());
+      g.drawRect(position * getWidth(), 0, getWidth() / 40, getHeight());
     }
     else 
     {
