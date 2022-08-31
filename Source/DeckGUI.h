@@ -14,10 +14,14 @@
 #include "DJAudioPlayer.h"
 #include "WaveformDisplay.h"
 #include "StyleSheet.h"
+#include "CDdisc.h"
 
 //==============================================================================
 /*
 */
+
+
+
 class DeckGUI : public Component,
     public Button::Listener,
     public Slider::Listener,
@@ -27,7 +31,8 @@ class DeckGUI : public Component,
 public:
     DeckGUI(DJAudioPlayer* player,
         AudioFormatManager& formatManagerToUse,
-        AudioThumbnailCache& cacheToUse);
+        AudioThumbnailCache& cacheToUse) ;
+
     ~DeckGUI();
 
     void paint(Graphics&) override;
@@ -47,9 +52,11 @@ public:
 
 private:
     WaveformDisplay waveformDisplay;
+
     Slider posSlider;
+    Label  posLabel;
+
     CustomDial volSlider, speedSlider;
-    Label volLabel, speedLabel, posLabel;
 
     TextButton  playButton{ "PLAY" }, 
                 pauseButton{ "PAUSE" }, 
@@ -59,12 +66,13 @@ private:
                 backwardButton{ "BACKWARD" }, 
                 loopButton{ "LOOP" }; 
 
- 
 
     FileChooser fChooser{"Select a file..."};
+    
     DJAudioPlayer* player; 
 
-    bool isLoaded = false; 
+    CDdisc cd;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DeckGUI)
 };
+

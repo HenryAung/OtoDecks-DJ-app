@@ -34,7 +34,6 @@ class DJAudioPlayer : public AudioSource {
     void pause(); 
     void forward(); 
     void backward(); 
-    void setLoop(); 
 
     /** get the relative position of the playhead */
     double getPositionRelative();

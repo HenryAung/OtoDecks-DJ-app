@@ -11,13 +11,15 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "DeckGUI.h"
 
+
 //==============================================================================
-DeckGUI::DeckGUI(DJAudioPlayer* _player, 
-                AudioFormatManager & 	formatManagerToUse,
-                AudioThumbnailCache & 	cacheToUse
-           ) : player(_player), 
-               waveformDisplay(formatManagerToUse, cacheToUse)
-    
+DeckGUI::DeckGUI(DJAudioPlayer* _player,
+    AudioFormatManager& formatManagerToUse,
+    AudioThumbnailCache& cacheToUse)
+    :   player(_player),
+        waveformDisplay(formatManagerToUse, cacheToUse), 
+        cd(formatManagerToUse, cacheToUse)
+              
 {
     addAndMakeVisible(waveformDisplay);
 
@@ -31,16 +33,13 @@ DeckGUI::DeckGUI(DJAudioPlayer* _player,
     addAndMakeVisible(volSlider);
     volSlider.addListener(this);
     volSlider.setRange(0.0f, 2.0f, 0.01f);
-    volLabel.setText("Volume" , dontSendNotification); 
-    volLabel.attachToComponent(&volSlider, false); 
 
     addAndMakeVisible(speedSlider);
     speedSlider.addListener(this);
     speedSlider.setRange(0.1f, 5.0f, 0.01f);
     speedSlider.setTextValueSuffix(" x"); 
-    speedLabel.setText("Speed", dontSendNotification); 
-    speedLabel.attachToComponent(&speedSlider, false); 
 
+    addAndMakeVisible(cd); 
 
     addAndMakeVisible(playButton);
     playButton.addListener(this);
@@ -56,9 +55,6 @@ DeckGUI::DeckGUI(DJAudioPlayer* _player,
 
     addAndMakeVisible(backwardButton);
     backwardButton.addListener(this);
-
-    addAndMakeVisible(loopButton);
-    loopButton.addListener(this);
 
     addAndMakeVisible(loadButton);
     loadButton.addListener(this);
@@ -80,25 +76,14 @@ void DeckGUI::paint (Graphics& g)
     g.setColour (Colours::lightgrey);
     g.drawRect (getLocalBounds(), 1);   // draw an outline around the component
 
-    
-    double W = getWidth() / 8;
-    double bigCircleSize = W * 2.7;
-    double bigCircleX = ((8*W) - bigCircleSize) / 2; 
-    double bigCircleY = (getHeight() - bigCircleSize) * 0.7;
+    double rowH = getHeight() / 8;
+    double columnW = getWidth() / 8;
 
-    double smallCircleSize = W * 0.6; 
-    double smallCircleX = ((8*W) - smallCircleSize) / 2; 
-    double smallCircleY = bigCircleY + ((bigCircleSize - smallCircleSize) / 2);
-
-    g.setColour(Colours::darkcyan);
-    g.fillEllipse(bigCircleX, bigCircleY , bigCircleSize , bigCircleSize);
-
+    // draw lable for volume and speed sliders 
     g.setColour(Colours::azure); 
-    g.fillEllipse(smallCircleX, smallCircleY , smallCircleSize, smallCircleSize);
-
-    if (isLoaded) {
-        g.drawText("Songs Name", smallCircleX, smallCircleY - 10, smallCircleSize, smallCircleSize, Justification::centred, true); 
-    }
+    g.setFont(20.0f); 
+    g.drawText("Volume", 30.0, rowH * 2.35, columnW * 4, rowH * 1.2, Justification::centredLeft, true); 
+    g.drawText("Speed", columnW * 4, rowH * 2.35, columnW * 3.5, rowH * 1.2, Justification::centredRight, true); 
     
 } 
 
@@ -112,15 +97,17 @@ void DeckGUI::resized()
  
     volSlider.setBounds(0, rowH * 2.35,columnW * 4 , rowH * 1.8);
     speedSlider.setBounds(columnW * 4, rowH * 2.35, columnW * 4, rowH * 1.8);
-    
 
-    playButton.setBounds(columnW * 0.5 , rowH * 7.1, columnW  , rowH * 0.6);
-    pauseButton.setBounds(columnW * 2, rowH * 7.1, columnW , rowH * 0.6);
-    stopButton.setBounds(columnW * 3.5, rowH * 7.1, columnW , rowH * 0.6);
-    forwardButton.setBounds(columnW * 5, rowH * 7.1, columnW , rowH * 0.6);
-    backwardButton.setBounds(columnW * 6.5, rowH * 7.1, columnW , rowH * 0.6);
-    loopButton.setBounds(columnW * 3.6, rowH , columnW * 0.8, rowH * 0.6);
-    loadButton.setBounds(columnW * 5.8, rowH , columnW * 0.8, rowH * 0.6);
+    cd.setBounds((getWidth() - (2.7 * columnW)) / 2, (getHeight() - (2.7 * columnW)) * 0.7, columnW * 2.7, columnW * 2.7); 
+
+    playButton.setBounds(columnW * 0.5 , rowH * 5, columnW  , rowH * 0.6);
+    loadButton.setBounds(columnW * 6, rowH * 5, columnW , rowH * 0.6);
+
+    pauseButton.setBounds(columnW * 0.8, rowH * 7.1, columnW , rowH * 0.6);
+    stopButton.setBounds(columnW * 2.6, rowH * 7.1, columnW , rowH * 0.6);
+    forwardButton.setBounds(columnW * 4.4, rowH * 7.1, columnW , rowH * 0.6);
+    backwardButton.setBounds(columnW * 6.2, rowH * 7.1, columnW , rowH * 0.6);
+
 }
 
 void DeckGUI::buttonClicked(Button* button)
@@ -150,19 +137,16 @@ void DeckGUI::buttonClicked(Button* button)
      {
          player->forward(); 
      }
-     if (button == &loopButton)
+
+     if (button == &loadButton)
      {
-         player->setLoop(); 
-     }
-       if (button == &loadButton)
-    {
        auto fileChooserFlags =  
         FileBrowserComponent::canSelectFiles;
         fChooser.launchAsync(fileChooserFlags, [this](const FileChooser& chooser)
         {
                 DeckGUI::loadSong(fChooser.getResult()); 
         });
-    }
+     }
 }
 
 void DeckGUI::sliderValueChanged (Slider *slider)
@@ -182,6 +166,12 @@ void DeckGUI::sliderValueChanged (Slider *slider)
         player->setPositionRelative(slider->getValue());
     }
     
+}
+
+void DeckGUI::loadSong(File file) {
+    player->loadURL(URL{ file }); // loading songs to player 
+    waveformDisplay.loadURL(URL{ file }); // and now the waveformDisplay as well
+    cd.loadSong(file); // loading song to cd to animate
 }
 
 bool DeckGUI::isInterestedInFileDrag (const StringArray &files)
@@ -206,9 +196,3 @@ void DeckGUI::timerCallback()
 }
 
 
-void DeckGUI::loadSong(File file ) {
-    player->loadURL(URL{ file });
-    isLoaded = true; 
-    // and now the waveformDisplay as well
-    waveformDisplay.loadURL(URL{ file });
-}

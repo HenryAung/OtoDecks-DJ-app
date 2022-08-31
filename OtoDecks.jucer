@@ -20,7 +20,9 @@
       <FILE id="nBjnc1" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>
       <FILE id="OJ0Xrs" name="MainComponent.cpp" compile="1" resource="0"
             file="Source/MainComponent.cpp"/>
+      <FILE id="oxHFri" name="CDdisc.cpp" compile="1" resource="0" file="Source/CDdisc.cpp"/>
       <FILE id="XNUqTR" name="StyleSheet.cpp" compile="1" resource="0" file="Source/StyleSheet.cpp"/>
+      <FILE id="piqdNV" name="CDdisc.h" compile="0" resource="0" file="Source/CDdisc.h"/>
       <FILE id="RxQ8KU" name="StyleSheet.h" compile="0" resource="0" file="Source/StyleSheet.h"/>
       <FILE id="CoVVKI" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
     </GROUP>

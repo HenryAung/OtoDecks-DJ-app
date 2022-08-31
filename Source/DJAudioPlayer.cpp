@@ -114,14 +114,6 @@ void DJAudioPlayer::backward() {
     transportSource.setPosition(currentPosition - 10.0); 
 }
 
-void DJAudioPlayer::setLoop() {
-    if (islooping == false) {
-        islooping = true; 
-        transportSource.setLooping(true);
-    }
-    
-}
-
 double DJAudioPlayer::getPositionRelative()
 {
     return transportSource.getCurrentPosition() / transportSource.getLengthInSeconds();

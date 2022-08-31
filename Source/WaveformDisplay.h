@@ -34,6 +34,7 @@ public:
     void setPositionRelative(double pos);
 
 private:
+
     AudioThumbnail audioThumb;
     bool fileLoaded; 
     double position;
