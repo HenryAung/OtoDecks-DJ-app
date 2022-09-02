@@ -17,14 +17,8 @@ using namespace juce;
 //==============================================================================
 PlayListComponent::PlayListComponent(
     DeckGUI* _deckgui1, DeckGUI* _deckgui2, AudioFormatManager& _formatManager)
-    :  deckgui1 (_deckgui1), deckgui2 (_deckgui2), formatManager(_formatManager)
+    : deckgui1(_deckgui1), deckgui2(_deckgui2), formatManager(_formatManager), SearchBarIsEmpty(true)
 {
-    // In your constructor, you should add any child components, and
-    // initialise any special settings that your component needs.
-
-    //trackTitles.push_back("Track 1");
-   
-
     tableComponent.getHeader().addColumn("Track title", 1, 400);
     tableComponent.getHeader().addColumn("Audio Type", 2, 200);
     tableComponent.getHeader().addColumn("Duration", 4, 200);
@@ -62,14 +56,22 @@ void PlayListComponent::paint (juce::Graphics& g)
 void PlayListComponent::resized()
 {
     searchBar.setBounds(10, 10, 200, 25);
-    searchBar.setText("Search Songs");
     AddSongsToLibaray.setBounds(getWidth() - 150, 10, 130, 25);
     tableComponent.setBounds(0, 50, getWidth(), getHeight() - 60);
 }
 
 int PlayListComponent::getNumRows()
 {
-    return trackTitles.size();
+    Array <File> input;
+
+    if (SearchBarIsEmpty == true) {
+        input = tracksFile;
+    }
+
+    if (SearchBarIsEmpty == false) {
+        input = filteredTracksFile;
+    }
+    return input.size();
 }
 
 void PlayListComponent::paintRowBackground(Graphics& g,
@@ -93,10 +95,21 @@ void PlayListComponent::paintCell(Graphics& g,
     int width,
     int height,
     bool rowIsSelected)
-{   // song name 
-    if (columnId == 1) {
+{   
+    Array <File> input; 
+
+    if (SearchBarIsEmpty == true) {
+         input = tracksFile;
+    } 
+
+    if (SearchBarIsEmpty == false) {
+         input = filteredTracksFile;
+    }
+    
+
+    if (columnId == 1) {        
         if (rowNumber < getNumRows()) {
-            g.drawText(trackTitles[rowNumber],
+            g.drawText(input[rowNumber].getFileNameWithoutExtension(),
                 2, 0,
                 width - 4, height,
                 Justification::centredLeft,
@@ -107,7 +120,7 @@ void PlayListComponent::paintCell(Graphics& g,
     // song type 
     if (columnId == 2) {
         if (rowNumber < getNumRows()) {
-            g.drawText(trackTypes[rowNumber],
+            g.drawText(input[rowNumber].getFileExtension() ,
                 2, 0,
                 width - 4, height,
                 Justification::centredLeft,
@@ -119,10 +132,9 @@ void PlayListComponent::paintCell(Graphics& g,
     if (columnId == 4) {
         if (rowNumber < getNumRows()) {
 
-            auto* reader = formatManager.createReaderFor( tracksFile[rowNumber]); //
+            auto* reader = formatManager.createReaderFor(input[rowNumber]); //
             if (reader != nullptr) // good file!  
             {
-                DBG("Songs is loaded to audio player and can be listened");
                 std::unique_ptr<AudioFormatReaderSource> newSource(new AudioFormatReaderSource(reader, true));
                 transportSource.setSource(newSource.get(), 0, nullptr, reader->sampleRate);
                 readerSource.reset(newSource.release());
@@ -136,7 +148,7 @@ void PlayListComponent::paintCell(Graphics& g,
             std::string songLengthInMin_str = std::to_string(totalSongLenghtInSecond / 60);
             std::string songLengthInSec_str = std::to_string(totalSongLenghtInSecond % 60);
             
-            g.drawText( songLengthInMin_str + ":" + songLengthInSec_str,
+            g.drawText(songLengthInMin_str + ":" + songLengthInSec_str,
                 2, 0,
                 width - 4, height,
                 Justification::centredLeft,
@@ -205,77 +217,89 @@ Component* PlayListComponent::refreshComponentForCell(int rowNumber,
 
 void PlayListComponent::addSongs() {
 
-    auto fileChooserFlags = FileBrowserComponent::canSelectFiles;
+    auto fileChooserFlags = FileBrowserComponent::canSelectMultipleItems;
     fChooser.launchAsync(fileChooserFlags, [this](const FileChooser& chooser)
         {
-            auto file = fChooser.getResult();
+            auto file = fChooser.getResults();
             PlayListComponent::setTracks(file);
-            
         }
     );
 }
 
-void PlayListComponent::setTracks(File file)
+void PlayListComponent::setTracks(Array <File> file)
 {
-        tracksFile.add(file);
-        tracksURL.push_back(file.getFullPathName().toStdString()); 
-        trackTitles.push_back(file.getFileNameWithoutExtension().toStdString());
-        trackTypes.push_back(file.getFileExtension().toStdString()); 
-        
+        tracksFile.addArray(file);        
         tableComponent.updateContent();
 }
 
 void PlayListComponent::loadLeft(int id ) {
-  deckgui1->loadSong(tracksFile[id]); // your player
-}
+    File input;
 
-void PlayListComponent::loadRight(int id) {
-    deckgui2->loadSong(tracksFile[id]); // your player
-    PlayListComponent::searchFilter("b");
-}
+    if (SearchBarIsEmpty == true) {
+        input = tracksFile[id];
+    }
 
-void PlayListComponent::deleteSong(int id) {
+    if (SearchBarIsEmpty == false) {
+        input = filteredTracksFile[id];
+    }
 
-    tracksFile.remove(id); 
-    trackTitles.erase(trackTitles.begin() + id); 
-    trackTypes.erase(trackTypes.begin() + id); 
-
+    deckgui1->loadSong(input); // your player
     tableComponent.updateContent();
 }
 
-void PlayListComponent::textEditorTextChanged(TextEditor& editor) {
-    auto text = searchBar.getText().toLowerCase().toStdString(); 
-    DBG("the input text is " << text);
+void PlayListComponent::loadRight(int id) {
+    File input;
 
-    PlayListComponent::searchFilter(text); 
-    
+    if (SearchBarIsEmpty == true) {
+        input = tracksFile[id];
+    }
+
+    if (SearchBarIsEmpty == false) {
+        input = filteredTracksFile[id];
+    }
+    deckgui2->loadSong(input); // your player
+    tableComponent.updateContent();
+}
+
+void PlayListComponent::deleteSong(int id) {
+    tracksFile.remove(id); 
+    tableComponent.updateContent();
+} 
+
+void PlayListComponent::textEditorTextChanged(TextEditor& editor) {
+
+    PlayListComponent::searchBarEmptyCheck();
+
+    if (SearchBarIsEmpty == false) {
+        auto text = searchBar.getText().toLowerCase().toStdString();
+        DBG("the input text is " << text);
+        filteredTracksFile.clear();  // to clear out previous recorded data 
+
+        for (auto& file : tracksFile) {
+            auto filename = file.getFileNameWithoutExtension().toStdString();
+
+            if (filename.rfind(text, 0) == 0) {
+                filteredTracksFile.add(file);
+                DBG("filtered Tracks name is >> " << filename);
+            }
+        }
+        DBG(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+        DBG("filtered Tracks file size is >> " << filteredTracksFile.size());
+    }
+    //tableComponent.updateContent(); 
+    repaint(); 
 }
  
 
-void PlayListComponent::searchFilter(std::string text) {
 
-    /*
-    std::string grapText = text;
-    std::vector<int> filteredSongs;
-    
-    //std::copy_if(trackTitles.begin(), trackTitles.end(), std::back_inserter(filteredSongs), [text](auto s) { return s.find(text) != std::string::npos; });
-
-        
-  std::copy_if(trackTitles.begin(), trackTitles.end(), back_inserter(filteredSongs), [grapText](auto s) { return s.find(text) != std::string::npos; });
-    */
-      
-
-  /*
-    std::vector<int> filteredSongs;
-    std::copy_if(trackTitles.begin(), trackTitles.end(), back_inserter(filteredSongs), [](auto s) { return s.find("b") != std::string::npos; });
-
-    for (auto& i : filteredSongs) {
-        DBG("Filtered songs are " << filteredSongs[i]);
+bool PlayListComponent::searchBarEmptyCheck() {
+    if (searchBar.isEmpty()) {
+        SearchBarIsEmpty = true; 
     }
-  */
-    
-    Array< juce::File > filteredTracksFile;
-  
-};
 
+    if (!searchBar.isEmpty()) {
+        SearchBarIsEmpty = false;
+    }
 
+    return SearchBarIsEmpty; 
+}

@@ -52,9 +52,9 @@ public:
             Component* existingComponentToUpdate) override;
 
         void addSongs(); 
-        void setTracks(File file);
-        void searchFilter(std::string text); 
+        void setTracks(Array <File> file);
         void textEditorTextChanged(TextEditor& editor) override; 
+        bool searchBarEmptyCheck(); 
 
         void loadLeft(int id); 
         void loadRight(int id); 
@@ -73,12 +73,11 @@ private:
 
     TableListBox tableComponent;
 
-   // std::vector< juce::File > tracksFile; 
     Array< juce::File > tracksFile;
+    Array< juce::File > filteredTracksFile;
 
-    std::vector < std::string > tracksURL;
-    std::vector<std::string> trackTitles;
-    std::vector<std::string> trackTypes; 
+    bool SearchBarIsEmpty; 
+
 
     DeckGUI* deckgui1; 
     DeckGUI* deckgui2;

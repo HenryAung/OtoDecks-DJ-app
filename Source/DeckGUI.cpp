@@ -60,8 +60,7 @@ DeckGUI::DeckGUI(DJAudioPlayer* _player,
     loadButton.addListener(this);
 
     startTimer(500);
-
-
+    startTimerHz(60); 
 }
 
 DeckGUI::~DeckGUI()
@@ -98,7 +97,7 @@ void DeckGUI::resized()
     volSlider.setBounds(0, rowH * 2.35,columnW * 4 , rowH * 1.8);
     speedSlider.setBounds(columnW * 4, rowH * 2.35, columnW * 4, rowH * 1.8);
 
-    cd.setBounds((getWidth() - (2.7 * columnW)) / 2, (getHeight() - (2.7 * columnW)) * 0.7, columnW * 2.7, columnW * 2.7); 
+    cd.setBounds((8 * columnW - (2.7 * columnW)) / 2, (getHeight() - (2.7 * columnW)) * 0.7, columnW * 2.7, columnW * 2.7); 
 
     playButton.setBounds(columnW * 0.5 , rowH * 5, columnW  , rowH * 0.6);
     loadButton.setBounds(columnW * 6, rowH * 5, columnW , rowH * 0.6);
@@ -116,17 +115,21 @@ void DeckGUI::buttonClicked(Button* button)
     {
         DBG("Play button was clicked "); 
         player->start();
+        cd.playSong(); 
     }
      if (button == &pauseButton)
     {
          DBG("Stop button was clicked "); 
         player->pause();
+        cd.pauseSong(); 
     }
 
      if (button == &stopButton)
      {
          DBG("Stop button was clicked ");
          player->stop();
+         waveformDisplay.setPositionRelative(0); 
+         cd.setAngle(0); 
      }
 
      if (button == &backwardButton)
@@ -193,6 +196,8 @@ void DeckGUI::timerCallback()
 {
     waveformDisplay.setPositionRelative(
             player->getPositionRelative());
+
+    cd.repaint(); 
 }
 
 
